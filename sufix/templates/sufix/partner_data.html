@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Projects">
+    <h3>Справочник Контрагентов:</h3>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 12px">
+    <tr>
+        <th>Сокращенное наименование</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Юридический адрес</th>
+        <th>ИНН/КПП</th>
+        <!--<th>ОГРН</th>-->
+        <th>Банковские реквизиты</th>
+        <th>Тел., E-mail</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 12px">
+    <tr>
+        <th>Наименование cокращённое</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Юридический адрес</th>
+        <th>ИНН/КПП</th>
+        <!--<th>ОГРН</th>-->
+        <th>Банковские реквизиты</th>
+        <th>Тел., E-mail</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 12px">
+     {% for partner in partner %}
+
+
+    <tr>
+	    <td><a href="/admin/sufix/partners/{{ partner.id }}/">{{ partner.partner_shortname }}</td>
+        <td>{% if partner.type_id == 1 %} {% else %}{{ partner.type.type }}{% endif %} </td>
+        <td>{{ partner.status.status }}</td>
+	    <td>{{ partner.partnerdetails.adress_legal }}</td>
+        <td>инн:{{ partner.partnerdetails.inn }} кпп:{{ partner.partnerdetails.kpp }}</td>
+        <!-- <td>{{ partner.partnerdetails.ogrn }}</td>-->
+        <td>{{ partner.partnerdetails.details_of_bank }}</td>
+        <td>{{ partner.partnerdetails.tel_fax }} {{ partner.partnerdetails.email }}</td>
+    </tr>
+    <!-- <tr>
+         <td colspan="8">Доп. описание для <strong>{{ partner.partner_name }}</strong>: {{ partner.partnersdescriptions.description}}</td>
+    </tr>-->
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+
+<a class="btn btn-sm btn-primary" role="button" href="/admin/sufix/partners/add/">+ Новый </a>
+
+</div>
+{% endblock %}

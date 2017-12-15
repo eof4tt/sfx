@@ -1,0 +1,18 @@
+{% csrf_token %}
+{% load bootstrap %}
+<!--{{ form|bootstrap_horizontal }}-->
+
+<div class="panel panel-primary">
+            <div style="font-size: smaller" class="panel-body">
+                {{ form.partner_shortname|bootstrap }}
+                {{ form.partner_name|bootstrap }}
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form.type|bootstrap }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.status|bootstrap }}
+                    </div>
+                </div>
+            </div>
+</div>

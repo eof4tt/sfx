@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="container">
+    <form class="form-signin" role="form" method="post" action=".">
+    <h4 class="form-signin-heading">Выход пользователя из системы</h4>
+        {% csrf_token %}
+        <p>Вы совершили выход из системы.</p>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Кнопка</button>
+    </form>
+
+</div>
+
+{% endblock %}

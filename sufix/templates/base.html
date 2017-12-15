@@ -1,0 +1,131 @@
+{% load cms_tags staticfiles menu_tags sekizai_tags %}
+<!doctype html>
+<!--suppress HtmlUnknownTarget -->
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}SUFIX T-Tel{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel='stylesheet' type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css">
+        <link rel="stylesheet" href="http://bootstrap-ru.com/303/examples/signin/signin.css">
+        <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <!-- <script type="text/javascript" src="https:///cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script> -->
+        <script type="text/javascript" src={% static 'datatables/js/jquery.dataTables.js' %}></script>
+
+        {% render_block "css" %}
+{{ form.media }}
+    </head>
+    <body>
+
+       {% cms_toolbar %}
+
+         <div class="container">
+            {% static_placeholder "head" %}
+            <div class="navbar navbar-inverse" role="navigation">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <b class="navbar-brand">SUFIX.t-tel</b>
+                </div><!-- /.navbar-header -->
+                <div class="collapse navbar-collapse nav-collapse">
+                    <ul class="nav navbar-nav">
+                        {% show_menu 0 100 100 100 "menu.html"%}
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <p class="navbar-text navbar-center" style="color: #5bc0de; font-size: x-small ">
+                                <a href="/profile/" class="navbar-link">{% if request.user.first_name and equest.user.last_name != '' %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</a>
+                                <br>{{ request.user.last_login}}
+                            </p>
+                        </li>
+                        <li>
+                            <form class="navbar-form navbar-center">
+                            {% if request.user.is_authenticated %}
+                                <a href="/logout" class="btn btn-default navbar-btn ">Выйти</a>
+                            {% else %}
+                                <a href="/login" class="btn btn-primary navbar-btn ">Войти</a>
+                            {% endif %}
+                            </form>
+                        </li>
+                    </ul>
+
+                </div><!-- /.collapse navbar-collapse -->
+            </div><!--navbar navbar-default -->
+            {% block content %}{% endblock content %}
+            {% static_placeholder "footer" %}
+         </div><!-- /.container -->
+        <!-- ==================================================
+                    Bootstrap core JavaScript
+        ================================================== -->
+
+       <!-- Placed at the end of the document so the pages load faster -->
+
+
+<!-- -->
+
+       <script>
+            $(document).ready(function() {
+                $('#tbl_сontent').DataTable();
+            } );;
+       </script>
+<!-- -->
+       <script type="text/javascript">
+	        $('#example')
+		        .removeClass( 'display' )
+		        .addClass('table table-striped table-bordered');
+       </script>
+<!-- -->
+
+       <script type="text/javascript">
+$(function () {
+	var $container = $('[data-container="set"]'),
+		$totalsum = $('[name="paydetails-0-pay_total_summ"]');
+	$(document)
+		.on('input', '[name="paydetails-0-pay_summ"], [name="paydetails-0-pay_vat_size"]', function () {
+			var $item = $(this),
+				$parent = $item.closest('[data-item="set"]'),
+				cost = parseFloat($parent.find('[name="paydetails-0-pay_summ"]').val()),
+				vat = parseFloat($parent.find('[name="paydetails-0-pay_vat_size"]').val());
+			$item.val($item.val().replace(/[^\d\.]/g, '').replace(/^\.+/g, '0.').replace(/^(\d+\.\d+)\.[\d\.]*$/g, '$1'));
+
+			if (isFinite(cost) && isFinite(vat)) {
+				var $vatsum = $parent.find('[name="paydetails-0-pay_vat_summ"]'),
+					//prev = parseFloat($valsum.val()) || 0,
+					next = (cost * vat*18/100).toFixed(2),
+					totalPrev = parseFloat($totalsum.val()) || 0;
+				$totalsum.val((parseFloat(next) + parseFloat(cost)).toFixed(2));
+				$vatsum.val(next);
+			}
+			else {
+				var $vatsum = $parent.find('[name="paydetails-0-pay_vat_summ"]');
+				$totalsum.val((parseFloat(cost)).toFixed(2));
+				$vatsum.val("");
+			}
+		});
+});
+</script>
+
+<!-- -->
+
+       <script type="text/javascript">
+            $(function () {
+                $('#id_date_in_picker').datetimepicker(
+                    {
+                        locale: 'ru',
+                        format: 'MM/YYYY'
+                    }
+                );
+            });
+        </script>
+        {% render_block "js" %}
+    </body>
+</html>

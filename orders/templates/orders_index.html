@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Orders">
+    <h4><span class="glyphicon glyphicon-folder-open"></span> Перечень заказов по контрактам:</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!--
+    <thead style="font-size: 12px" >
+    <tr>
+        <th rowspan="2">Проект/Контракт</th>
+        <th rowspan="2">Наименование</th>
+        <th colspan="2"><div align="Center">Плановые даты</div></th>
+        <th colspan="2"><div align="Center">Фактические даты</div></th>
+        <th rowspan="2">Закрытие</th>
+        <th rowspan="2">Тип</th>
+        <th rowspan="2">Статус</th>
+        <th rowspan="2">Субподрядчик</th>
+        <th rowspan="2">Доп. описание</th>
+    </tr>
+    <tr>
+        <th>Начало</th>
+        <th>Окончание</th>
+        <th>Начало</th>
+        <th>Окончание</th>
+
+    </tr>
+    </thead>
+-->
+    <thead style="font-size: 11px">
+    <tr>
+        <th>Контракт</th>
+        <th>Наименование</th>
+        <th>Сумма без НДС (руб.)</th>
+        <th>Даты (план)</th>
+        <th>Даты (факт)</th>
+        <th>Закрытие (Выполнен)</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Субподрядчик</th>
+        <th>Документы</th>
+        <th>Дополнительно</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 11px">
+    <tr>
+        <th>Контракт</th>
+        <th>Наименование</th>
+        <th>Сумма без НДС (руб.)</th>
+        <th>Даты (план)</th>
+        <th>Даты (факт)</th>
+        <th>Закрытие (Выполнен)</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Субподрядчик</th>
+        <th>Документы</th>
+        <th>Дополнительно</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 10px">
+     {% for order in order %}
+
+
+    <tr>
+        <td><a href="/contracts/{{ order.project_name.id }}"><span class="glyphicon glyphicon-briefcase data-toggle="tooltip" data-placement="bottom" title="Перейти""></span> {{ order.project_name }}</a></td>
+        <td><a href="/orders/{{ order.id }}"><span class="glyphicon glyphicon-folder-open" data-toggle="tooltip" data-placement="bottom" title="Перейти"></span>  {{ order.order_name }}</a></td>
+        <td>{{ order.ordersdescription.order_summ }}</td>
+        <td><p>Start:  {% if order.date_in == None %} Н/Д {% else %}{{ order.date_in|date:"d.m.Y" }}{% endif %}</p>
+            <p>Stop:  {% if order.date_out == None %} Н/Д {% else %}{{ order.date_out|date:"d.m.Y" }}{% endif %}</p>
+        </td>
+        <td><p>Start:  {% if order.date_inreal == None %} Н/Д {% else %}{{ order.date_inreal|date:"d.m.Y" }}{% endif %}</p>
+            <p>Stop:  {% if order.date_outreal == None %} Н/Д {% else %}{{ order.date_outreal|date:"d.m.Y" }}{% endif %}</p>
+        </td>
+
+        <td>{% if order.date_closed == None %} Н/Д {% else %}{{ order.date_closed|date:"d.m.Y" }}{% endif %}</td>
+        <td>{{ order.type.type }}</td>
+        <td>{{ order.status.status }}</td>
+        <td>{{ order.subcontractor_name.partner_shortname }}</td>
+        <td>{% for doc2order in doc2order %}
+            {% if doc2order.order_name.id == order.id %}
+                <br>{% if perm_edit == True %}
+                        <a href="/media/{{ doc2order.doc_data }}"><span class="glyphicon glyphicon-paperclip" data-toggle="tooltip" data-placement="bottom" title="Скачать"></span> {{ doc2order.doc_name }}</a>
+                    {% else %}
+                        <span class="glyphicon glyphicon-eye-close" data-toggle="tooltip" data-placement="bottom" title="Нет доступа"></span>
+                    {% endif %}
+                    <p style="font-size: xx-small">Рег№:{{ doc2order.reg_num }}; Тип:{{ doc2order.type }}; Статус:{{ doc2order.status }}</p>
+            {% endif %}
+        {% endfor %}
+        </td>
+        <td>{{ order.ordersdescription.description }}
+            <p style="font-size: smaller" align=right><a href="/orders/{{ order.id }}"><span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="bottom" title="Просмотр"></span></a>
+                {% if order.status_id = 6%}
+                    {% if order.date_closed != None %}
+                        {% if perm_edit == True %}
+                            | <a><span class="glyphicon glyphicon-remove-circle" data-toggle="tooltip" data-placement="bottom" title="Закрыт. Редактирование невозможно."></span></a></p>
+                        {% endif %}
+                    {% else %}
+                        {% if perm_edit == True %}
+                            | <a><span class="glyphicon glyphicon-ok-circle" data-toggle="tooltip" data-placement="bottom" title="Выполнен. Редактирование невозможно."></span></a></p>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if perm_edit == True %}
+                        | <a href="/orders/{{ order.id}}/edit"><span class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="Редактировать"></span></a></p>
+                    {% endif %}
+                {% endif %}
+
+
+        </td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+{% if perm_add == True %}
+    <a class="btn btn-sm btn-primary" role="button" href="{% url "orders_add" %}"><span class="glyphicon glyphicon-plus"></span> Новый </a>
+{% endif %}
+</div>
+{% endblock %}

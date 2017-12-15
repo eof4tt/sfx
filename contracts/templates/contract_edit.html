@@ -1,0 +1,47 @@
+{% extends "main.html" %}
+{% block title %}Редактирование контракта :: {{ project.project_shotname }}{% endblock %}
+{% block main %}
+  <h4>Pедактирование контракта</h4>
+
+    <form action="" method="post" enctype="multipart/form-data">
+      <div class="form">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Основные данные:</h4>
+                </div>
+                <div style="font-size: smaller" class="panel-body">
+                    {% include "forms2contracts/form4edit.html" %}
+                </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Описание:</h4>
+                </div>
+                <div style="font-size: smaller" class="panel-body">
+                    {% include "forms2contracts/formset2desc.html" %}
+                </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Вложения:</h4>
+                </div>
+                <div style="font-size: smaller" class="panel-body">
+                    {% include "forms2contracts/formset2files.html" %}
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p><div class="submit-button"><input class="btn btn-sm btn-default" type="submit" value="Изменить"></div></p>
+    </form>
+  <p>
+      <a class="btn btn-sm btn-primary" role="button" href="/contracts/index"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+  </p>
+
+{% endblock %}

@@ -1,0 +1,23 @@
+<table id="filepool_file_list" href="{% url "filepool_index" %}">
+  <tr>
+    <td class="link"><a id="filepool_prev" href="#">&lt;</a></td>
+    <td class="file"> </td>
+    <td class="file"> </td>
+    <td class="file">&nbsp;</td>
+    <td class="file">&nbsp;</td>
+    <td class="link"><a id="filepool_next" href="#">&gt;</a></td>
+  </tr>
+</table>
+<div class="form">
+  <form id="filepool_form" action="{% url "filepool_upload" %}"
+  method="post" enctype="multipart/form-data" target="filepool_output">
+    {% csrf_token %}
+    <div class="form-field">
+      <div class="label">Файл для выгрузки</div>
+      <div class="control"><input type="file" id="file_to_upload"
+      name="file_to_upload"></div>
+    </div>
+    <div class="submit-button"><input type="submit" value="Выгрузить"></div>
+  </form>
+  <iframe id="filepool_output" name="imagepool_output"></iframe>
+</div>

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Partners">
+    <h4><span class="glyphicon glyphicon-tower"></span> Список Партнеров:</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 11px">
+    <tr>
+        <th>Наименование</th>
+        <th>Сокращённое</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Адрес</th>
+        <th>ИНН/КПП</th>
+        <th>Контакты</th>
+        <th>Описание</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 11px">
+    <tr>
+        <th>Наименование</th>
+        <th>Сокращённое</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Адрес</th>
+        <th>ИНН/КПП</th>
+        <th>Контакты</th>
+        <th>Описание</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 10px">
+     {% for partner in partner %}
+
+
+    <tr>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}<a href="/partners/{{ partner.id }}">{{ partner.partner_name }}</a></p></td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}<a href="/partners/{{ partner.id }}">{{ partner.partner_shortname }}</a></p></td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}{{ partner.type }}</p></td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#9c3328 "> {% else %} <p style="color:#2b542c "> {% endif %}{{ partner.status }}</p></td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}{% if partner.partnerdetails.adress_legal != ''%}Юр.адр.: {{ partner.partnerdetails.adress_legal}} {% if partner.partnerdetails.adress_actual != ''%}<br>Факт.адр.:{{ partner.partnerdetails.adress_actual}}{% endif %}{% else %} <p style="color:#888888 ">Нет данных</p> {% endif %} </p> </td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}{% if partner.partnerdetails.inn != ''%}{{ partner.partnerdetails.inn}} {% if partner.partnerdetails.kpp != ''%}/ {{ partner.partnerdetails.kpp}}{% endif %} {% else %}<p style="color:#888888 ">Нет данных</p> {% endif %} </p> </td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}{% if partner.partnerdetails.tel_fax != '' or partner.partnerdetails.email != ''%}{{ partner.partnerdetails.tel_fax}}<br>{{ partner.partnerdetails.email}}{% else %}<p style="color:#888888 ">Нет данных</p> {% endif %} </p> </td>
+        <td>{% if partner.status.id == 2 %} <p style="color:#8c8c8c "> {% else %} <p> {% endif %}{{ partner.partnersdescriptions.description }}</p></td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+
+<a class="btn btn-sm btn-primary" role="button" href="{% url "partners_add"%}"><span class="glyphicon glyphicon-plus"></span> Новый </a>
+
+</div>
+{% endblock %}

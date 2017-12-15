@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Projects">
+    <h3>Список текущих Проектов/Контрактов:</h3>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 12px">
+    <tr>
+        <th>Наименование</th>
+        <th>Сокращённое</th>
+        <th>Дата начала</th>
+        <th>Дата окончания</th>
+        <th>Дата закрытия</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Заказчик</th>
+        <th>Доп. описание</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 12px">
+    <tr>
+        <th>Наименование</th>
+        <th>Сокращённое</th>
+        <th>Дата начала</th>
+        <th>Дата окончания</th>
+        <th>Дата закрытия</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Заказчик</th>
+        <th>Доп. описание</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 12px">
+     {% for contract in contract %}
+
+
+    <tr>
+	    <td><a href="/contracts/{{ contract.id }}/edit">{{ contract.project_name }}</a></td>
+	    <td>{{ contract.project_shortname }}</td>
+        <td>{{ contract.date_in }}</td>
+        <td>{{ contract.date_out }}</td>
+        <td>{{ contract.date_closed }}</td>
+        <td>{{ contract.type.type }}</td>
+        <td>{{ contract.status.status }}</td>
+        <td>{{ contract.project_to_partner.partner_shortname }}</td>
+        <td>{{ contract.projectsdescriptions.description}}</td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+<!--
+<a class="btn btn-sm btn-primary" role="button" href="/admin/sufix/projects/add/">+ Новый </a>
+-->
+<a class="btn btn-sm btn-primary" role="button" href="{% url "contracts_add" pk=0 %}">+ Новый </a>
+
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% csrf_token %}
+{% load bootstrap %}
+<!--{{ form|bootstrap_horizontal }}-->
+{{ form.order_name|bootstrap }}
+<div class="row">
+    <div  class="col-md-6">
+        {{ form.intention|bootstrap }}
+    </div>
+    <div class="col-md-3">
+        {{ form.status|bootstrap }}
+    </div>
+    <div class="col-md-3">
+        {{ form.pay_date|bootstrap }}
+    </div>
+</div>

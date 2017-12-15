@@ -1,0 +1,5 @@
+{% csrf_token %}
+<div id="HelloUser">
+    <h5 style="text-align: center;"> Вы вошли на портал как {% if request.user.is_authenticated %} {{ request.user.first_name }} {{ request.user.last_name }} ({{ request.user.email }}) - [ Дата и время авторизации: {{ request.user.last_login}} ]</b>{% else %}<b>АНОНИМНЫЙ пользователь</b>, для пля полного доступа необходимо пройти авторизацию в системе.{% endif %} </h5>
+</div>
+

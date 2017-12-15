@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="container">
+    <form class="form-signin" role="form" method="post" action=".">
+    <h4 class="form-signin-heading">Регистрация пользователя</h4>
+        {% csrf_token %}
+        {% load bootstrap %}
+        {{ form|bootstrap }}
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <div class="g-recaptcha" data-sitekey="6Lf-qzsUAAAAAGPFK7hi9qtoVZ9eFn8IjDL7CxK7"></div>
+        {% if messages %}
+            <div style="color: darkred">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            </div>
+        {% endif %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Регистрация</button>
+    </form>
+</div>
+
+{% endblock %} 

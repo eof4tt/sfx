@@ -1,0 +1,344 @@
+{% extends "main.html" %}
+{% block title %}{{ object.project_name }} :: {{ object.order_name }}{% endblock %}
+{% block main %}
+{% if object %}
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4 class="panel-title">{{ object.order_name }}</h4>
+            </div>
+            <div class="panel-body">
+                <p><b>Тип заказа:</b> {{ object.type }}</p>
+                <p><b>Исполнитель заказа:</b> {%  if perm_edit == True %}<a href="/partners/{{ object.subcontractor_name.id }}/">{{ object.subcontractor_name }}</a>{% else %}{{ object.subcontractor_name }}{% endif %}</p>
+                <p><b>Статус заказа:</b> {{ object.status }}</p>
+                {% if object.date_closed != None or object.status_id == 7 %}
+                    <p>Дата закрытия: {{ object.date_closed }}</p>
+                {% endif %}
+                <table id="tbl_сontent" class="display" cellspacing="0">
+                <tbody style="font-size: 12px">
+                    <tr>
+                        <td colspan="2"><b>Плановые даты:</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>Начало:</b> {% if object.date_in  == None %} нет данных {% else %}{{ object.date_in }}{% endif %}</td>
+                        <td><b>Окончание:</b> {% if object.date_out  == None %} нет данных {% else %}{{ object.date_out }}{% endif %}</td>
+                    </tr>
+
+<p>
+                    <tr>
+                        <td colspan="2"><b>Фактические даты:</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>Начало:</b> {% if object.date_inreal  == None %} нет данных {% else %}{{ object.date_inreal }}{% endif %}</td>
+                        <td><b>Окончание:</b> {% if object.date_outreal  == None %} нет данных {% else %}{{ object.date_outreal }}{% endif %}</td>
+                    </tr>
+                    {% if object.date_closed != None or object.status_id == 7 %}
+                    <tr>
+                        <td style="color: #3c763d" colspan="2"><b>Заказ выполнен и закрыт:</b> {{ object.date_closed }} </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4 class="panel-title">Описание</h4>
+            </div>
+            <div style="font-size: smaller" class="panel-body">
+                <p><b>Сумма заказа:  </b>{{ object.ordersdescription.order_summ}} руб., без учета НДС </p>
+                <p><b>Cумма входящих финансовых операций:  </b>{{ orders_payinsumm }};   <b>Исполнение заказа:</b> {{ orders_finperformance_in }}% </p>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow={{ orders_used }} aria-valuemin="0" aria-valuemax="100" style="width: {{ orders_used}}%">
+                        <span >{{ orders_used }}% - {{ orders_payinsumm }} руб.</span>
+                    </div>
+                </div>
+                <p><b>Cумма исходящих финансовых операций:  </b>{{ orders_payoutsumm }}; <b>  Маржа:</b> {{ orders_finperformance_summ }} руб.  ({{ orders_finperformance }}% от входящих операций)</p>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow={{ orders_outused }} aria-valuemin="0" aria-valuemax="100" style="width: {{ orders_outused}}%">
+                        <span >{{ orders_outused }}% - {{ orders_payoutsumm }} руб.</span>
+                    </div>
+                </div>
+                <b>Текст описания: </b> {% if object.ordersdescription.description == '' %} <p style="color: #888888"> Отсутствует дополнительное описание данного заказа{% else %} <p>{{ object.ordersdescription.description }}{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Информация о проекте:</a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse in">
+                <div style="font-size: smaller" class="panel-body">
+                    <p><a href="/contracts/{{ object.project_name.id }}"> {{ object.project_name }}</a></p>
+                    <p> <b>Полное наименование проекта:</b> {{ object.project_name.project_name }}</p>
+                    <p> <b>Заказчик:</b> {%  if perm_edit == True %}<a href="/partners/{{ object.project_name.project_to_partner.id }}">{{ object.project_name.project_to_partner }}</a>{% else %}{{ object.project_name.project_to_partner }}{% endif %}</p>
+                </div>
+            </div>
+        </div>
+        {%  if perm_edit == True %}
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Финансовые операции</a>
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse">
+            <div style="font-size: smaller" class="panel-body">
+<!-- ---------------------------------------------------------------------------------------- -->
+                <ul class="nav nav-tabs">
+                    <li class="dropdown active">
+                        <a data-toggle="dropdown" class="dropdown-toggle" id="myTabDrop1" href="#">Входящие <b class="caret"></b></a>
+                            <ul aria-labelledby="myTabDrop1" role="menu" class="dropdown-menu">
+                                <li class="active"><a data-toggle="tab" tabindex="-1" href="#inpay_success">Выполненные</a></li>
+                                <li class=""><a data-toggle="tab" tabindex="-1" href="#inpay_matching">Согласование</a></li>
+                                <li class=""><a data-toggle="tab" tabindex="-1" href="#inpay_canceled">Отмененные</a></li>
+                            </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" id="myTabDrop2" href="#">Исходящие <b class="caret"></b></a>
+                            <ul aria-labelledby="myTabDrop2" role="menu" class="dropdown-menu">
+                                <li class=""><a data-toggle="tab" tabindex="-1" href="#outpay_success">Выполненные</a></li>
+                                <li class=""><a data-toggle="tab" tabindex="-1" href="#outpay_matching">Согласование</a></li>
+                                <li class=""><a data-toggle="tab" tabindex="-1" href="#outpay_canceled">Отмененные</a></li>
+                            </ul>
+                    </li>
+                    <li><a href="#allpay" data-toggle="tab">Все</a></li>
+                    <div align = "right">
+                    {% if object.status_id == 6 or object.status_id == 3 %}
+                        <a class="btn btn-xs btn-danger {% if object.date_closed != None %}disabled{% endif %}" role="button" href="{% url "payments_add"%}{{ object.id}}">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Добавить
+                        </a>
+                    {% endif %}
+                </div>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade in active" id="inpay_success">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id  and payment_list.status.id == 3  and payment_list.intention.pay_type.id == 1 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+
+                    <div class="tab-pane fade" id="inpay_matching">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id  and payment_list.status.id == 1  and payment_list.intention.pay_type.id == 1 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="tab-pane fade" id="inpay_canceled">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id  and payment_list.status.id == 2  and payment_list.intention.pay_type.id == 1 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+
+<!-- ----------------------------------------------------------------------- -->
+                    <div class="tab-pane fade" id="outpay_success">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id  and payment_list.status.id == 3  and payment_list.intention.pay_type.id == 2 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+
+                    <div class="tab-pane fade" id="outpay_matching">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id  and payment_list.status.id == 1  and payment_list.intention.pay_type.id == 2 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="tab-pane fade" id="outpay_canceled">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id  and payment_list.status.id == 2  and payment_list.intention.pay_type.id == 2 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+<!-- ----------------------------------------------------------------------- -->
+                    <div class="tab-pane fade" id="allpay">
+                        <h5><span class="label label-primary">Выполненные:</span></h5>
+                            <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id and payment_list.status.id == 3 %}
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention }}; <b>Статус:</b> {{ payment_list.status }};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ }} руб.;  <b>Дата:</b> {{ payment_list.pay_date }};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ }} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            </ol>
+                        <h5><span class="label label-default">На согласаовании:</span></h5>
+                            <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id and payment_list.status.id == 1 %}
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention }}; <b>Статус:</b> {{ payment_list.status }};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ }} руб.;  <b>Дата:</b> {{ payment_list.pay_date }};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ }} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            </ol>
+                        <h5><span class="label label-danger">Отмененные:</span></h5>
+                            <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.id == object.id and payment_list.status.id == 2 %}
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention }}; <b>Статус:</b> {{ payment_list.status }};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ }} руб.;  <b>Дата:</b> {{ payment_list.pay_date }};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ }} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            </ol>
+                    </div>
+                </div>
+<!-- ---------------------------------------------------------------------------------------- -->
+            </div>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Документы</a>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse">
+            <div style="font-size: smaller" class="panel-body">
+                <ol>
+                    {% for doc_list in doc_list %}
+                        {% if doc_list.order_name.id == object.id %}
+                            <li><a href="/media/{{ doc_list.doc_data }}">{{ doc_list.doc_name }}</a>
+                                <br><b>Рег.номер:</b> {{ doc_list.reg_num }} от {{ doc_list.doc_date}},
+                                <br><b>Тип документа:</b> {{ doc_list.type}}; <b>Статус:</b> {{ doc_list.status}};
+                                <br><b>Источник:</b> {{ doc_list.status_add}}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                </ol>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% else %}
+    <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">Внимание</h4>
+            </div>
+            <div class="panel-body">
+                <p><b>Заданный Заказ не найден</b> {{ object.order_name }}</p>
+            </div>
+    </div>
+{% endif %}
+    <p><a class="btn btn-sm btn-primary" role="button" href="/orders/index/"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+        {%  if perm_edit == True %}
+            {% if object.date_closed != None and object.status_id == 6%}
+                <a class="btn btn-sm btn-danger disabled" role="button" href=""><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+            {% else %}
+                <a class="btn btn-sm btn-danger" role="button" href="/orders/{{ object.id}}/edit/"><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+            {% endif %}
+        {% endif %}
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Contracts">
+    <h4><span class="glyphicon glyphicon-briefcase"></span> Список текущих контрактов:</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 11px">
+    <tr>
+        <th>Наименование</th>
+        <th>Сокращённое</th>
+        <th>Сумма без НДС (руб.)</th>
+        <th>Даты выполнения</th>
+        <th>Дата закрытия</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Заказчик</th>
+        <th>Дополнительно</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 11px">
+    <tr>
+        <th>Наименование</th>
+        <th>Сокращённое</th>
+        <th>Сумма без НДС (руб.)</th>
+        <th>Дата выполнения</th>
+        <th>Дата закрытия</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Заказчик</th>
+        <th>Дополнительно</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 10px">
+     {% for contract in contract %}
+
+
+    <tr>
+        <td>
+	        <a href="/contracts/{{ contract.id }}"><span class="glyphicon glyphicon-briefcase" data-toggle="tooltip" data-placement="bottom" title="Перейти"></span> {{ contract.project_name }}</a>
+        </td>
+	    <td>{{ contract.project_shortname }}</td>
+        <td>{{ contract.projectsdescriptions.project_summ }} </td>
+        <td><p>Start:  {% if contract.date_in == None %} Н/Д {% else %}{{ contract.date_in|date:"d.m.Y" }}{% endif %}</p>
+            <p>Stop:  {% if contract.date_out == None %} Н/Д {% else %}{{ contract.date_out|date:"d.m.Y" }}{% endif %}</p>
+        <td>{% if contract.date_closed == None %} Н/Д {% else %}{{ contract.date_closed|date:"d.m.Y" }}{% endif %}</td>
+        <td>{{ contract.type.type }}</td>
+        <td>{{ contract.status.status }}</td>
+        <td>{{ contract.project_to_partner.partner_shortname }}</td>
+        <td>{{ contract.projectsdescriptions.description}}
+            <p style="font-size: smaller" align=right><a href="/contracts/{{ contract.id }}"><span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="bottom" title="Просмотр"></span></a>
+                {% if contract.date_closed != None and contract.status_id == 6%}
+                    {% if perm_edit == True %}
+                        | <a><span class="glyphicon glyphicon-ok-circle" data-toggle="tooltip" data-placement="bottom" title="Выполнен и закрыт. Редактирование невозможно."></span></a>
+                    {% endif %}
+                {% else %}
+                    {% if perm_edit == True %}
+                        | <a href="/contracts/{{ contract.id }}/edit"><span class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="Редактировать"></span></a></p>
+                    {% endif %}
+                {% endif %} </p>
+        </td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+{% if perm_edit == True %}
+    <a class="btn btn-sm btn-primary" role="button" href="{% url "contracts_add"%}"><span class="glyphicon glyphicon-plus"></span> Новый </a>
+{% endif %}
+</div>
+{% endblock %}

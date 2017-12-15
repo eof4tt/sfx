@@ -1,0 +1,109 @@
+{% extends "main.html" %}
+{% block title %}{{ object.project_name }} :: {{ object.order_name }}{% endblock %}
+{% block main %}
+{% if object %}
+<h4>Детализация о финансовой операции:</h4>
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">Операция #{{ object.id }} от {{ object.pay_date }}</h4>
+                <p style="font-size: smaller">Объект операции: <a href="/contracts/{{ object.order_name.project_name_id }}">{{ object.order_name.project_name }}</a> / <a href="/orders/{{ object.order_name_id }}">{{ object.order_name }}</a></p>
+            </div>
+            <div class="panel-body">
+                <p><b>Цель операции:</b> {{ object.intention }}</p>
+                <p><b>Статус операции:</b> {{ object.status }}</p>
+                <p><b>Дата операции:</b> {{ object.pay_date }}</p>
+
+                <table id="tbl_сontent" class="display" cellspacing="0">
+                <tbody style="font-size: 12px">
+                    <tr>
+                        <td colspan="3"><b>Финансовая составляющая операции (валюта операции - Российский рубль):</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>Сумма, без НДС</b></td>
+                        <td><b>Размер НДС (%)</b></td>
+                        <td><b>Сумма НДС</b></td>
+                    </tr>
+                    <tr>
+                        <td>{{ object.paydetails.pay_summ }}</td>
+                        <td>{{ object.paydetails.pay_vat_size }}%</td>
+                        <td>{{ object.paydetails.pay_vat_summ }}</td>
+                    </tr>
+<p>
+                    <tr>
+                        <td colspan="3"><b>ОБЩАЯ СУММА:</b> {{ object.paydetails.pay_total_summ }}</td>
+                    </tr>
+                </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4 class="panel-title">Описание</h4>
+            </div>
+            <div style="font-size: smaller" class="panel-body">
+                <b>Текст описания: </b> {% if object.paymentsdescription.description == '' %} <p style="color: #888888"> Отсутствует описание данной операции{% else %} <p>{{ object.paymentsdescription.description}}{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Информация об объекте операции:</h4>
+            </div>
+            <div style="font-size: smaller" class="panel-body">
+                <p><a href="/contracts/{{ object.order_name.project_name_id }}">{{ object.order_name.project_name }}</a></p>
+                <ul>
+                    <p> <b>Полное наименование проекта:</b> {{ object.order_name.project_name.project_name }}</p>
+                    <p> <b>Заказчик:</b> <a href="/partners/{{ object.order_name.project_name.project_to_partner.id }}">{{ object.order_name.project_name.project_to_partner }}</a></p>
+                </ul>
+                <p><a href="/orders/{{ object.order_name_id }}">{{ object.order_name }}</a></p>
+                <ul>
+                    <p> <b>Полное наименование заказа:</b> {{ object.order_name}}</p>
+                    <p> <b>Субподрядчик/Исполнитель:</b> <a href="/partners/{{ object.order_name.subcontractor_name.id }}">{{ object.order_name.subcontractor_name }}</a></p>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Документы</h4>
+            </div>
+            <div style="font-size: smaller" class="panel-body">
+                <ol>
+                    {% for doc_list in doc_list %}
+                        {% if doc_list.payment_name.id == object.id %}
+                            <li><a href="/media/{{ doc_list.doc_data }}">{{ doc_list.doc_name }}</a>
+                                <br><b>Рег.номер:</b> {{ doc_list.reg_num }} от {{ doc_list.doc_date}},
+                                <br><b>Тип документа:</b> {{ doc_list.type}}; <b>Статус:</b> {{ doc_list.status}};
+                                <br><b>Источник:</b> {{ doc_list.status_add}}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+    <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">Внимание</h4>
+            </div>
+            <div class="panel-body">
+                <p><b>Заданный Заказ не найден</b> {{ object.order_name }}</p>
+            </div>
+    </div>
+{% endif %}
+    <p><a class="btn btn-sm btn-primary" role="button" href="/payments/index/"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+        {% if object.status_id == 3 %}
+            <a class="btn btn-sm btn-danger disabled" role="button" href=""><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+        {% else %}
+            <a class="btn btn-sm btn-danger" role="button" href="/payments/{{ object.id}}/edit/"><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+        {% endif %}
+
+{% endblock %}

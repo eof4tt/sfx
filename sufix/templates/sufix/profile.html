@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+{% csrf_token %}
+
+    <h4 class="form-signin-heading">Профиль пользователя</h4>
+    <div class="col-md-7">
+        <div class="panel panel-primary">
+            <div class="panel-heading">{{ user.get_full_name }}</div>
+            <div class="panel-body">
+                <p><b>Имя:</b> {{ user.first_name }}</p>
+                <p><b>Фамилия:</b> {{ user.last_name }}</p>
+                <p><b>Логин:</b> {{ user.username }} </p>
+                <p><b>E-mail:</b> {{ user.email }}</p>
+
+            </div>
+            <div class="panel-footer">
+                <p> </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="panel panel-info">
+            <div class="panel-heading">Информация</div>
+            <div class="panel-body">
+                <p> {% if user.get_full_name == "" %}<b>Внимание:</b><t style="color: darkred"> Требуется подтверждение профиля от Администратора </t>{% endif %}</p>
+                <p> {% if user.is_active == True %}<b>Статус активации:</b><b style="color: green"> ОК </b>{% endif %}</p>
+                <p> {% if user.is_staff == True %}<b>Статус модератора:</b><b style="color: green"> ОК </b>{% endif %}</p>
+                <p> {% if user.is_superuser == True %}<b>Статус суперпользователя:</b><b style="color: green"> ОК </b>{% endif %}</p>
+                <p><b>Регистрация:</b> {{ user.date_joined }}</p>
+                <p><b>Авторизация:</b> {{ user.last_login }}</p>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}

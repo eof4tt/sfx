@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Docs">
+    <h4><span class="glyphicon glyphicon-file"></span> Список документов по контрактам:</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+    <thead style="font-size: 11px">
+    <tr>
+        <th>Контракт</th>
+        <th>Наименование документа</th>
+        <th>Рег.№</th>
+        <th>Дата докум.</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Источник</th>
+        <th>Ссылка</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 11px">
+    <tr>
+        <th>Контракт</th>
+        <th>Наименование документа</th>
+        <th>Рег.№</th>
+        <th>Дата докум.</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Источник</th>
+        <th>Ссылка</th>
+    </tr>
+    </tfoot>
+
+
+<tbody style="font-size: 10px">
+    {% for doc4contract in doc4contract %}
+    <tr>
+        <td><a href="/contracts/{{ doc4contract.project_name.id }}"> <span class="glyphicon glyphicon-briefcase" data-toggle="tooltip" data-placement="bottom" title="Перейти к контракту"></span>
+            </a>{{ doc4contract.project_name }}</td>
+        <td>{{ doc4contract.doc_name }}</td>
+        <td>{{ doc4contract.reg_num }}</td>
+        <td>{{ doc4contract.doc_date }}</td>
+                <td>{{ doc4contract.type }}</td>
+                <td>{{ doc4contract.status }}</td>
+                <td>{{ doc4contract.status_add }}</td>
+        <td>
+            {% if perm_flink == True %}
+                <a href="/media/{{ doc4contract.doc_data }}"> Скачать</a>
+            {% else %}
+                <span class="glyphicon glyphicon-eye-close" data-toggle="tooltip" data-placement="bottom" title="Нет доступа"></span>
+            {% endif %}
+        </td>
+    </tr>
+
+    {% endfor %}
+
+    </tbody>
+</table>
+</div>
+{% endblock %}

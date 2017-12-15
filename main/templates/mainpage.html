@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+{% block title %}Главная страница{% endblock %}
+{% block main %}
+  <h2>СУФИКС</h2>
+  <h3>Контракты</h3>
+  <table class="list-table">
+    {% for object in contracts %}
+      <tr>
+        <td class="centered"><a href="{% url "contracts_detail" pk=object.pk %}"><a></td>
+        <td><a href="{% url "contracts_detail" pk=object.pk %}">{{ object.project_name }}</a></td>
+        <td>{{ object.description }}</td>
+        <td class="centered">{% if object.date_closed > 0 %} Проект закрыт{% endif %}</td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

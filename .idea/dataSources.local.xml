@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="Django default" uuid="d2ddfdf2-9372-4f77-91b5-66ac1be8aa67">
+      <database-info product="MySQL" version="5.5.54-0+deb8u1" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
+      <user-name>sfx</user-name>
+      <user-password>dfc1dfcfdfd3dffadfcbdfd9dfd9dffddfe5dff8dfeedff5dfd9dfdfdfccdfc3dfd2</user-password>
+      <resolve-scope>sfx_db:</resolve-scope>
+    </data-source>
+    <data-source name="Django default2" uuid="20d8bfb6-20d0-4853-a58b-0b4cccc57e87">
+      <database-info product="MySQL" version="5.5.54-0+deb8u1" jdbc-version="4.0" driver-name="MySQL Connector Java" driver-version="mysql-connector-java-5.1.35 ( Revision: 5fb9c5849535c13917c2cf9baaece6ef9693ef27 )">
+        <extra-name-characters>#@</extra-name-characters>
+        <identifier-quote-string>`</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="exact" quoted-identifiers="exact" />
+      <user-name>sfx</user-name>
+      <user-password>dfc1dfcfdfd3dffadfcbdfd9dfd9dffddfe5dff8dfeedff5dfd9dfdfdfccdfc3dfd2</user-password>
+      <resolve-scope>sfx_db:</resolve-scope>
+    </data-source>
+  </component>
+</project>

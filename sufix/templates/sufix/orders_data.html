@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Projects">
+    <h3>Перечень Заказов по Проектам/Контрактам:</h3>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 12px" >
+    <tr>
+        <th rowspan="2">Проект/Контракт</th>
+        <th rowspan="2">Наименование</th>
+        <th colspan="2"><div align="Center">Плановые даты</div></th>
+        <th colspan="2"><div align="Center">Фактические даты</div></th>
+        <th rowspan="2">Закрытие</th>
+        <th rowspan="2">Тип</th>
+        <th rowspan="2">Статус</th>
+        <th rowspan="2">Субподрядчик</th>
+        <th rowspan="2">Доп. описание</th>
+    </tr>
+    <tr>
+        <th>Начало</th>
+        <th>Окончание</th>
+        <th>Начало</th>
+        <th>Окончание</th>
+
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 12px">
+    <tr>
+        <th>Проект/Контракт</th>
+        <th>Наименование</th>
+        <th>Начало (план)</th>
+        <th>Окончание (план)</th>
+        <th>Начало (факт)</th>
+        <th>Окончание (факт)</th>
+        <th>Закрытие</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Субподрядчик</th>
+        <th>Доп. описание</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 12px">
+     {% for order in order %}
+
+
+    <tr>
+	    <td>{{ order.project_name }}</td>
+        <td><a href="/admin/sufix/orders/{{ order.id }}/">{{ order.order_name }}</a></td>
+        <td>{{ order.date_in }}</td>
+        <td>{{ order.date_out }}</td>
+        <td>{{ order.date_inreal }}</td>
+        <td>{{ order.date_outreal }}</td>
+        <td>{{ order.date_closed }}</td>
+        <td>{{ order.type.type }}</td>
+        <td>{{ order.status.status }}</td>
+        <td>{{ order.subcontractor_name.partner_shortname }}</td>
+        <td>{{ order.ordersdescription.description }}</td>
+    </tr>
+
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+
+<a class="btn btn-sm btn-primary" role="button" href="/admin/sufix/orders/add/">+ Новый </a>
+
+</div>
+{% endblock %}

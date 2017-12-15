@@ -1,0 +1,42 @@
+{% extends "main.html" %}
+{% block title %}Добавление Заказа{% endblock %}
+{% block main %}
+  <h4>Добавление нового заказа</h4>
+    <form action="" method="post" enctype="multipart/form-data">
+      <div class="form">
+        <div class="row">
+          <div class="col-md-7">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Основные данные:</h4>
+                </div>
+                <div style="font-size: smaller" class="panel-body">
+                    {% include "forms2orders/form4add.html" %}
+                </div>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Описание:</h4>
+                </div>
+                <div style="font-size: smaller" class="panel-body">
+                    {% include "forms2orders/formset2desc.html" %}
+                </div>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Вложения:</h4>
+                </div>
+                <div style="font-size: smaller" class="panel-body">
+                    {% include "forms2orders/formset2files.html" %}
+                </div>
+            </div>
+          </div>
+        </div>
+        <p><div class="submit-button"><input class="btn btn-sm btn-default" type="submit" value="Сохранить"></div></p>
+    </form>
+    <p><a class="btn btn-sm btn-primary" role="button" href="/orders/index/"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a></p>
+{% endblock %}

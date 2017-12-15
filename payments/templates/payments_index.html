@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Payments">
+    <h4><span class="glyphicon glyphicon-transfer"></span> Список платежей и операций по взаиморасчетам :</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 12px">
+    <tr>
+        <th>Вн. ИД#</th>
+        <th>Контракт/Заказ</th>
+        <th>Статус</th>
+        <th>Дата</th>
+        <th>Цель операции</th>
+        <th>Сумма (без НДС)</th>
+        <th>Размер НДС</th>
+        <th>Сумма НДС</th>
+        <th>Общая сумма (в т.ч. НДС)</th>
+        <th>Доп. информ.</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 12px">
+    <tr>
+        <th>Вн. ИД#</th>
+        <th>Контракт/Заказ</th>
+        <th>Статус</th>
+        <th>Дата</th>
+        <th>Цель операции</th>
+        <th>Сумма (без НДС)</th>
+        <th>Размер НДС</th>
+        <th>Сумма НДС</th>
+        <th>Общая сумма (в т.ч. НДС)</th>
+        <th>Доп. информ.</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 12px">
+    {% for payment in payment %}
+    <tr>
+        <td><a href="/payments/{{ payment.id }}"><span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="bottom" title="Перейти"></span> {{ payment.id }}</a></td>
+        <td><a href="/contracts/{{ payment.order_name.project_name_id }}"><span class="glyphicon glyphicon-briefcase" data-toggle="tooltip" data-placement="bottom" title="Перейти к контракту"></span> {{ payment.order_name.project_name }}</a> <br><a href="/orders/{{ payment.order_name_id }}"><span class="glyphicon glyphicon-folder-open" data-toggle="tooltip" data-placement="bottom" title="Перейти к заказу"></span> {{ payment.order_name }}</a></td>
+        <td>{{ payment.status }}</td>
+        <td>{{ payment.pay_date }}</td>
+        <td>{{ payment.intention }}</td>
+        <td>{{ payment.paydetails.pay_summ }}</td>
+        <td>{{ payment.paydetails.pay_vat_size }}%</td>
+        <td>{{ payment.paydetails.pay_vat_summ }}</td>
+        <td>{{ payment.paydetails.pay_total_summ }}</td>
+        <td>{{ payment.paymentsdescription.description }}
+            <p style="font-size: smaller" align=right><a href="/payments/{{ payment.id }}"><span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="bottom" title="Просмотр"></span></a> | {% if perm_edit == True %}<a href="/payments/{{ payment.id }}/edit"><span class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="Редактировать"></span></a>{% endif %} </p>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+<!-- -->
+</table>
+{% if perm_add == True %}
+    <a class="btn btn-sm btn-primary" role="button" href="/payments/add/"><span class="glyphicon glyphicon-plus"></span> Новый </a>
+{% endif %}
+</div>
+{% endblock %}

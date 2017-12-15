@@ -1,0 +1,12 @@
+    self.form = DocsForm(request.POST,request.FILES)
+    if self.form.is_valid():
+        filetype=request,FILES["doc_data"].content_type
+        if filetype=="application/pdf":
+            self.form.save()
+            message.add_message(request,message.SUCCESS, "Добавление прошло успешно")
+            return redirect ("index")
+        else:
+            message.add_message(request, message.ERROR, "Допускаются файлы формата *.PDF")
+            return super (DocCreate,self).get(request,*arg,**kwargs)
+    else:
+        return super(OrderCreate, self).get(request, *arg, **kwargs)

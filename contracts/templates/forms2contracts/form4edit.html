@@ -1,0 +1,32 @@
+{% csrf_token %}
+{% load bootstrap %}
+<!--{{ form|bootstrap_horizontal }}-->
+
+<div class="panel panel-success">
+            <div style="font-size: smaller" class="panel-body">
+                {{ form.project_shortname|bootstrap }}
+                {{ form.project_name|bootstrap }}
+                <div class="row">
+                    <div  class="col-md-6">
+                        {{ form.project_to_partner|bootstrap }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.type|bootstrap }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.status|bootstrap }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        {{ form.date_in|bootstrap }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form.date_out|bootstrap }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form.date_closed|bootstrap }}
+                    </div>
+                </div>
+            </div>
+</div>

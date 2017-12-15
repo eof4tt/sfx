@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Docs">
+    <h4><span class="glyphicon glyphicon-file"></span> Список документов по заказам:</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+    <thead style="font-size: 11px">
+    <tr>
+        <th>Контракт</th>
+        <th>Заказ</th>
+        <th>Наименование документа</th>
+        <th>Рег.№</th>
+        <th>Дата докум.</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Источник</th>
+        <th>Ссылка</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 11px">
+    <tr>
+        <th>Контракт</th>
+        <th>Заказ</th>
+        <th>Наименование документа</th>
+        <th>Рег.№</th>
+        <th>Дата докум.</th>
+        <th>Тип</th>
+        <th>Статус</th>
+        <th>Источник</th>
+        <th>Ссылка</th>
+    </tr>
+    </tfoot>
+
+
+<tbody style="font-size: 10px">
+    {% for doc4order in doc4order %}
+    <tr>
+        <td><a href="/contracts/{{ doc4order.order_name.project_name.id }}"><span class="glyphicon glyphicon-briefcase" data-toggle="tooltip" data-placement="bottom" title="Перейти к контракту"></span> </a>{{ doc4order.order_name.project_name }}</td>
+        <td><a href="/orders/{{ doc4order.order_name.id }}"><span class="glyphicon glyphicon-folder-open" data-toggle="tooltip" data-placement="bottom" title="Перейти"></span></a> {{ doc4order.order_name }}</td>
+        <td>{{ doc4order.doc_name }}</td>
+        <td>{{ doc4order.reg_num }}</td>
+        <td>{{ doc4order.doc_date }}</td>
+                <td>{{ doc4order.type }}</td>
+                <td>{{ doc4order.status }}</td>
+                <td>{{ doc4order.status_add }}</td>
+        <td>
+            {% if perm_flink == True %}
+                <a href="/media/{{ doc4order.doc_data }}"><span class="glyphicon glyphicon-paperclip" data-toggle="tooltip" data-placement="bottom" title="Скачать"></span> Скачать</a>
+            {% else %}
+                <span class="glyphicon glyphicon-eye-close" data-toggle="tooltip" data-placement="bottom" title="Нет доступа"></span>
+            {% endif %}
+        </td>
+    </tr>
+
+    {% endfor %}
+
+    </tbody>
+</table>
+</div>
+{% endblock %}

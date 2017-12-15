@@ -1,0 +1,94 @@
+{% extends "main.html" %}
+{% block title %}{{ object.partner_shortname }} :: {{ object.type }}{% endblock %}
+{% block main %}
+{% if object %}
+
+<div class="row" xmlns="http://www.w3.org/1999/html">
+    <div class="col-md-7">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">{{ object }}</h4>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                            <div class="col-md-10"><b>Организация:</b> <a href="/partners/{{ object.partner.id }}">{{ object.partner }}</a></div>
+                            <div class="col-md-2" align="right">{% if object.active == 1 %}<span class="label label-success">Активный</span>{% else %}<span class="label label-danger">Архивный</span>{% endif %}</div>
+                </div>
+                {% if object.active == 1 %}
+                    <div class="panel panel-success">{% else %}<div class="panel panel-danger">{% endif %}
+                    <div class="panel-body">
+                      <table id="tbl_сontent" class="display" cellspacing="0">
+                          {% if partners.partnerdetails.adress_legal == '' %}
+                              <p style="font-size: smaller ">
+                                  <t style="color: #888888">
+                                      <br>Реквизиты для данного контрагента отсутствуют.
+                                      <br>Данные необходимо заполнить в форме редактирования, раздел "Реквизиты".
+                                      <br>Для заполнения данных  нажмите кнопку "Редактировать".
+                                  </t>
+                              <p>
+                          {% else %}
+                          <tbody style="font-size: smaller">
+                            <tr>
+                                <td colspan="3"><b>Должность:</b> {{ object.contactdetails.poosition }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"><b>Адрес расположения:</b>
+                                    {% if object.contactdetails.adress_location == None %}
+                                        <t style="color: #888888"> Отсутствует или совпадает с адресом органазации ...</t></td>
+                                    {% else %}
+                                        {{ object.contactdetails.adress_location }} </td>
+                                    {% endif %}
+                            </tr>
+                            <tr>
+                                <td><b>Телефон мобильный:</b>  {{ object.contactdetails.mobile_tel }}</td>
+                                <td></td>
+                                <td><b>Телефон рабочий:</b>  {{ object.contactdetails.work_tel }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Электронная почта:</b>  {{ object.contactdetails.email }}</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                          </tbody>
+                          {% endif %}
+                      </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="col-md-5">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">Описание</h4>
+            </div>
+            <div style="font-size: smaller" class="panel-body">
+
+                {% if object.contactsdescriptions.description == '' %} <p style="color: #888888"> Отсутствует дополнительное описание по данному контакту ...{% else %} <p> {{ object.contactsdescriptions.description}} {% endif %}</p>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% else %}
+    <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">Внимание</h4>
+            </div>
+            <div class="panel-body">
+                <p><b>Заданный контрагент не найден</b> {{ object.partner_name. }}</p>
+            </div>
+    </div>
+{% endif %}
+  <p><a class="btn btn-sm btn-primary" role="button" href="/contacts/index/"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+      {%  if perm_edit == True %}
+        <a class="btn btn-sm btn-danger" role="button" href="/contacts/{{ object.id}}/edit/"><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+      {% endif %}
+
+{% endblock %}

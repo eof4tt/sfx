@@ -1,0 +1,219 @@
+{% extends "main.html" %}
+{% block title %}{{ object.project_shortname }} :: {{ object.type }}{% endblock %}
+{% block main %}
+{% if object %}
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">{{ object.project_shortname }}</h4>
+            </div>
+            <div class="panel-body">
+                <p><b>Полное наименование:</b> {{ object.project_name }}</p>
+                <p><b>Категория контракта:</b> {{ object.type }}</p>
+                <p><b>Статус контракта:</b> {{ object.status }}</p>
+                <p><b>Заказчик:</b> {% if perm_edit == True %}<a href="/partners/{{ object.project_to_partner.id }}/">{{ object.project_to_partner }}</a>{% else %}{{ object.project_to_partner }}{% endif %}</p>
+                <table id="tbl_сontent" class="display" cellspacing="0">
+                <tbody style="font-size: 12px">
+                    <tr>
+                        <td colspan="2"><b>Сроки контракта:</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>Начало:</b> {% if object.date_in  == None %} нет данных {% else %}{{ object.date_in }}{% endif %}</td>
+                        <td><b>Окончание:</b> {% if object.date_out  == None %} нет данных {% else %}{{ object.date_out }}{% endif %}</td>
+                    </tr>
+                    {% if object.date_closed != None or object.status_id == 6  %}
+                    <tr>
+                        <td style="color: #9c3328" colspan="2"><b>Контракт закрыт:</b> {{ object.date_closed }} </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+                </table>
+
+            </div>
+        </div>
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4 class="panel-title">Описание</h4>
+            </div>
+            <div style="font-size: smaller" class="panel-body">
+                <p><b>Сумма контракта:  </b>{{ projects.projectsdescriptions.project_summ}}</p>
+                <p><b>Общая сумма заказов по данному контракту:  </b>{{ orders_summ }} - <b>{{ orders_used}}%</b> от суммы контракта</p>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-default" role="progressbar" aria-valuenow={{ orders_used}} aria-valuemin="0" aria-valuemax="100" style="width: {{ orders_used}}%">
+                        <span >{{ orders_used}}% - {{ orders_summ }} руб.</span>
+                    </div>
+                </div>
+                <p><b>Cумма входящих финансовых операций:  </b>{{ orders_payinsumm }};   <b>Общее исполнение заказов:</b> {{ orders_finperformance_in }}% </p>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow={{ orders_finperformance_in }} aria-valuemin="0" aria-valuemax="100" style="width: {{ orders_finperformance_in }}%">
+                        <span >{{ orders_finperformance_in}}% - {{ orders_payinsumm }} руб.</span>
+                    </div>
+                </div>
+                <p><b>Cумма исходящих финансовых операций:  </b>{{ orders_payoutsumm }}; <b>  Маржа:</b> {{ orders_finperformance_summ }} руб.  ({{ orders_finperformance }}% от входящих операций)</p>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow={{ orders_finperformance_out }} aria-valuemin="0" aria-valuemax="100" style="width: {{ orders_finperformance_out }}%">
+                        <span >{{ orders_finperformance_out }}% - {{ orders_payoutsumm }} руб.</span>
+                    </div>
+                </div>
+                <b>Текст описания: </b> {% if object.projectsdescriptions.description == '' %} <p style="color: #888888"> Отсутствует дополнительное описание данного контракта{% else %} <p>{{ projects.projectsdescriptions.description}}{% endif %}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Заказы</a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse in">
+            <div style="font-size: smaller" class="panel-body">
+                {% if perm_edit == True %}
+                    <div align = "right">
+                        <a class="btn btn-xs btn-success {% if object.date_closed != None or object.status_id != 4  %}disabled{% endif %}" role="button" href="{% url "orders_add"%}{{ object.id}}">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Добавить
+                        </a>
+                    </div>
+                {% endif %}
+                <ol>
+                {% for order_list in order_list %}
+                    {% if order_list.project_name.id == object.id %}
+                        <li>  <a href="/orders/{{ order_list.id }}">{{ order_list.order_name }}</a>
+                            <br> <b>Сумма без НДС (руб.):</b> {{ order_list.ordersdescription.order_summ }};
+                            <br> <b>Исполнитель:</b> {% if perm_edit == True %}<a href="/partners/{{ order_list.subcontractor_name.id }}/"> {{ order_list.subcontractor_name}}</a>{% else %}{{ order_list.subcontractor_name}}{% endif %};
+                            <br><b>Статус:</b> {{ order_list.status}}
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                </ol>
+            </div>
+            </div>
+        </div>
+        {% if perm_edit == True %}
+        <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Финансовые операции по заказам данного Контракт</a>
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse">
+            <div style="font-size: smaller" class="panel-body">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#inpay" data-toggle="tab">Входящие</a></li>
+                    <li><a href="#outpay" data-toggle="tab">Исходящие</a></li>
+                    <li><a href="#allpay" data-toggle="tab">Все</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="inpay">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.project_name.id == object.id  and payment_list.status.id == 3  and payment_list.intention.pay_type.id == 1 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="tab-pane fade" id="outpay">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.project_name.id == object.id  and payment_list.status.id == 3  and payment_list.intention.pay_type.id == 2 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    <div class="tab-pane fade" id="allpay">
+                        <br>
+                        <ol>
+                            {% for payment_list in payment_list %}
+                                {% if payment_list.order_name.project_name.id == object.id  and payment_list.status.id == 3 %}
+
+                                    <li>
+                                        <p>
+                                            <b>ID</b> <a href="/payments/{{ payment_list.pk }}"> {{ payment_list.pk }}</a>#   <a href="/orders/{{ payment_list.order_name.id }}">{{ payment_list.order_name }}</a>
+                                            <br> <b>Направление:</b> {{ payment_list.intention}}; <b>Статус:</b> {{ payment_list.status}};
+                                            <br> <b>Сумма (без НДС):</b> {{ payment_list.paydetails.pay_summ}} руб.;  <b>Дата:</b> {{ payment_list.pay_date}};
+                                            <br> <b>Размер НДС:</b> {{ payment_list.paydetails.pay_vat_size }} %;  <b>Сумма НДС:</b> {{ payment_list.paydetails.pay_vat_summ }} руб.;
+                                            <br> <b>Общая сумма операции:</b> {{ payment_list.paydetails.pay_total_summ}} руб.
+                                        </p>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Документы</a>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse">
+            <div style="font-size: smaller" class="panel-body">
+                <ol>
+                    {% for doc_list in doc_list %}
+                        {% if doc_list.project_name.id == object.id %}
+                            <li><a href="/media/{{ doc_list.doc_data }}">{{ doc_list.doc_name }}</a>
+                                <br><b>Рег.номер:</b> {%  if doc_list.reg_num == '' %} Без номера {% else %}{{ doc_list.reg_num }}{% endif %} <b>Дата</b>{{ doc_list.doc_date}};
+                                <br><b>Тип документа:</b> {{ doc_list.type}}; <b>Статус:</b> {{ doc_list.status}};
+                                <br><b>Источник:</b> {{ doc_list.status_add}}
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                </ol>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    </div>
+</div>
+{% else %}
+    <div class="panel panel-danger">
+            <div class="panel-heading">
+                <h4 class="panel-title">Внимание</h4>
+            </div>
+            <div class="panel-body">
+                <p><b>Заданный Контракт не найден</b> {{ object.project_name }}</p>
+            </div>
+    </div>
+{% endif %}
+  <p><a class="btn btn-sm btn-primary" role="button" href="/contracts/index/"><span class="glyphicon glyphicon-chevron-left"></span> Назад</a>
+      {% if perm_edit == True %}
+          {% if object.date_closed != None and object.status_id == 6%}
+              <a class="btn btn-sm btn-danger disabled" role="button" href=""><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+          {% else %}
+              <a class="btn btn-sm btn-danger" role="button" href="/contracts/{{ object.id}}/edit/"><span class="glyphicon glyphicon-edit"></span> Редактировать <span class="glyphicon glyphicon-chevron-right"></span></a></p>
+          {% endif %}
+      {% endif %}
+{% endblock %}

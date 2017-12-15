@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="container">
+    <form class="form-signin" role="form" method="post" action=".">
+    <h4 class="form-signin-heading">Авторизация пользователя</h4>
+        {% csrf_token %}
+        <!-- {{ form.as_p }} -->
+        <!--<table>
+
+            <small>{{ form.username.errors }}{{ form.password.errors }}</small>
+        <tr>
+            <td><small>{{ form.username.label_tag }}</small></td>
+            <td>{{ form.username }}</td>
+        </tr>
+        <tr>
+            <td><small>{{ form.password.label_tag }}</small></td>
+            <td>{{ form.password }}</td>
+        </tr>
+
+
+        </table>
+        -->
+        <!-- // -->
+        <!-- // -->
+        <input id="id_username" maxlength="254" name="username" type="text" class="form-control" placeholder="Логин" required autofocus>
+        <input  id="id_password" name="password" type="password" class="form-control" placeholder="Пароль" required>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <div class="g-recaptcha" data-sitekey="6Lf-qzsUAAAAAGPFK7hi9qtoVZ9eFn8IjDL7CxK7"></div>
+            <div style="color: darkred">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+            </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Подтвердить</button>
+    </form>
+    <p align="center">Если вы не зарегистрированы, то перейдите по ссылке на <a href="/registration">Регистрацию</a>  </p>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="Contacts">
+    <h4><span class="glyphicon glyphicon-user"></span> Справочник Контактов:</h4>
+
+<table id="tbl_сontent" class="display" width="100%" cellspacing="0">
+<!-- -->
+    <thead style="font-size: 12px">
+    <tr>
+        <th>Имя Контакта</th>
+        <th>Контрагент</th>
+        <th>Должность</th>
+        <th>Информация</th>
+        <th>Расположение</th>
+        <th>Статус</th>
+        <th>Доп. информ.</th>
+    </tr>
+    </thead>
+<!-- -->
+    <tfoot style="font-size: 12px">
+    <tr>
+        <th>Имя Контакта</th>
+        <th>Контрагент</th>
+        <th>Должность</th>
+        <th>Информация</th>
+        <th>Расположение</th>
+        <th>Статус</th>
+        <th>Доп. информ.</th>
+    </tr>
+    </tfoot>
+<!-- -->
+    <tbody style="font-size: 11px">
+     {% for contact in contact %}
+
+
+    <tr>
+
+	    <td><a href="/contacts/{{ contact.id }}"><span class="glyphicon glyphicon-user"></span></a> {{ contact.last_name }} {{ contact.first_name }} {{ contact.patronymic }}</td>
+        <td><a href="/partners/{{ contact.partner.id }}"><span class="glyphicon glyphicon-tower" data-toggle="tooltip" data-placement="bottom" title="Перейти к контрагенту"></span> </a> {{ contact.partner.partner_shortname }}</td>
+        <td>{{ contact.contactdetails.poosition }}</td>
+        <td>{% if contact.contactdetails.email  != '' %}E-mail: <a href="mailto:{{ contact.contactdetails.email }}">{{ contact.contactdetails.email }}</a>{% else %}<p style="color:#888888 ">Нет  реквизитов</p>{% endif %}
+            {% if contact.contactdetails.mobile_tel != '' %}<br>Моб.тел.: {{ contact.contactdetails.mobile_tel }}{% endif %}
+            {% if contact.contactdetails.work_tel != '' %}<br> Раб.тел.:{{ contact.contactdetails.work_tel }}{% endif %}
+        </td>
+        <td>{{ contact.contactdetails.adress_location }}</td>
+        <td>{% if contact.active == False %} <p style="color:#9c3328 "> Архивный {% else %} <p style="color:#2b542c "> Активный {% endif %}</p></td>
+        <td>{{ contact.contactsdescriptions.description}} <p style="text-align: right;"><a href="/contacts/{{ contact.id }}"><span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="bottom" title="Просмотр"></span></a> {% if perm_edit == True %} | <a href="/contacts/{{ contact.id }}/edit"><span class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="Редактировать"></span></a>{% endif %}</p> </td>
+
+
+    </tr>
+    <!-- <tr>
+         <td colspan="8">Доп. описание для <strong>{{ partner.partner_name }}</strong>: {{ partner.partnersdescriptions.description}}</td>
+    </tr>-->
+    {% endfor %}
+
+    </tbody>
+<!-- -->
+</table>
+{% if perm_add == True %}
+    <a class="btn btn-sm btn-primary" role="button" href="{% url "contacts_add"%}"><span class="glyphicon glyphicon-plus"></span> Новый </a>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% csrf_token %}
+{% load bootstrap %}
+
+    <div style="font-size: smaller" class="panel-body">
+        <div class="row" data-item="set">
+            <div class="col-md">
+                {{ formset2detail|bootstrap_horizontal }}
+            </div>
+
+        </div>
+    </div>
